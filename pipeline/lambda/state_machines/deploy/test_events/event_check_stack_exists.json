@@ -1,0 +1,25 @@
+{
+    "taskParams": {
+        "environmentName": "prod",
+        "stackName": "sample-lambda-app"
+    },
+    "CodePipeline.job": {
+        "id": "ff9876fd-825f-4bb5-a4ba-9809e570d52b",
+        "data": {
+            "inputArtifacts": [
+                {
+                    "location": {
+                        "s3Location": {
+                            "bucketName": "codepipeline-us-east-1-418586629775",
+                            "objectKey": "SamplePipelineStepFu/MyApp/SfBoSNn"
+                        },
+                        "type": "S3"
+                    },
+                    "revision": "1c4b6d59314ab32a9bc5b83eb3c6307ef99ede40",
+                    "name": "MyApp"
+                }
+            ],
+            "outputArtifacts": []
+        }
+    }
+}

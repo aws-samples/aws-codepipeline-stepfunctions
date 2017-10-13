@@ -1,0 +1,25 @@
+{
+    "taskParams": {
+        "environmentName": "prod",
+        "stackName": "sample-lambda-app"
+    },
+    "CodePipeline.job": {
+        "id": "fe1efb8e-942b-4e16-b91a-0337cbc7903b",
+        "data": {
+            "inputArtifacts": [
+                {
+                    "location": {
+                        "s3Location": {
+                            "bucketName": "pf-s3-pipeline-artifacts-bucket",
+                            "objectKey": "SamplePipeline/MyCodeComm/8uLoPoB"
+                        },
+                        "type": "S3"
+                    },
+                    "revision": "bfc14f62477a83e191d8272cad6e4c83c054dc67",
+                    "name": "MyCodeCommitApp"
+                }
+            ],
+            "outputArtifacts": []
+        }
+    }
+}

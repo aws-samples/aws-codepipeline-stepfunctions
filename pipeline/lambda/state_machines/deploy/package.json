@@ -1,0 +1,17 @@
+{
+  "name": "deploy",
+  "version": "1.0.0",
+  "description": "StepFunction state machine that deploys infrastructure and code changes to lambda serverless applications",
+  "main": "state_machine_deploy_serverless_app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "marcilio@amazon.com",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.116.0",
+    "cloudformation": "file:../../../local_modules/cloudformation.tar.gz",
+    "fs": "0.0.1-security",
+    "pipeline_utils": "file:../../../local_modules/pipeline_utils.tar.gz"
+  }
+}

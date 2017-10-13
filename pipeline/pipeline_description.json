@@ -1,0 +1,64 @@
+{
+    "pipeline": {
+        "roleArn": "arn:aws:iam::665243897136:role/AWS-CodePipeline-Service", 
+        "stages": [
+            {
+                "name": "Source", 
+                "actions": [
+                    {
+                        "inputArtifacts": [], 
+                        "name": "Source", 
+                        "actionTypeId": {
+                            "category": "Source", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "CodeCommit"
+                        }, 
+                        "outputArtifacts": [
+                            {
+                                "name": "CodeCommitOutput"
+                            }
+                        ], 
+                        "configuration": {
+                            "PollForSourceChanges": "true", 
+                            "BranchName": "master", 
+                            "RepositoryName": "SampleApp"
+                        }, 
+                        "runOrder": 1
+                    }
+                ]
+            }, 
+            {
+                "name": "Prod", 
+                "actions": [
+                    {
+                        "inputArtifacts": [
+                            {
+                                "name": "CodeCommitOutput"
+                            }
+                        ], 
+                        "name": "Deploy", 
+                        "actionTypeId": {
+                            "category": "Invoke", 
+                            "owner": "AWS", 
+                            "version": "1", 
+                            "provider": "Lambda"
+                        }, 
+                        "outputArtifacts": [], 
+                        "configuration": {
+                            "FunctionName": "StateMachineTriggerLambda", 
+                            "UserParameters": "{\"s3Bucket\": \"codepipeline-stepfunctions-sample\", \"stateMachineFile\": \"state_machine_input.json\"}"
+                        }, 
+                        "runOrder": 1
+                    }
+                ]
+            }
+        ], 
+        "artifactStore": {
+            "type": "S3", 
+            "location": "codepipeline-us-east-1-418586629775"
+        }, 
+        "name": "StepFunctionsDrivenDeploymentPipeline", 
+        "version": 1
+    }
+}

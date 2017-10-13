@@ -1,0 +1,64 @@
+
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Creates a sample lambda function'
+Parameters:
+  environmentName:
+    Type: String
+    AllowedValues:
+      - dev
+      - test
+      - prod
+    Description: Environment name, eg, dev, test, prod
+Resources:
+  LambdaExecutionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+              - lambda.amazonaws.com
+            Action:
+            - sts:AssumeRole
+        Path: "/"
+        Policies:
+        - PolicyName: root
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+            - Effect: Allow
+              Action:
+              - logs:*
+              Resource: arn:aws:logs:*:*:*
+  SampleLambdaFunction:
+    Type: "AWS::Lambda::Function"
+    Properties:
+      FunctionName: !Sub ${environmentName}_SampleLambdaFunction1
+      Handler: "index.handler"
+      Code:
+        S3Bucket: "sample-lambda-mitel"
+        S3Key: "simple_lambda_function.zip"
+      Runtime: "nodejs6.10"
+      Timeout: "60"
+      Role:
+        Fn::GetAtt:
+          - "LambdaExecutionRole"
+          - "Arn"
+  SampleLambdaFunctionVersion: 
+    Type: "AWS::Lambda::Version"
+    Properties: 
+      FunctionName: 
+        Ref: "SampleLambdaFunction"
+      Description: "SampleLambdaFunction version"
+  SampleLambdaFunctionAlias: 
+    Type: "AWS::Lambda::Alias"
+    Properties: 
+      FunctionName: 
+        Ref: "SampleLambdaFunction"
+      FunctionVersion: 
+        Fn::GetAtt: 
+          - "SampleLambdaFunctionVersion"
+          - "Version"
+      Name: !Sub ${environmentName}

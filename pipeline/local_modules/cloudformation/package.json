@@ -1,0 +1,11 @@
+{
+  "name": "cloudformation",
+  "version": "1.0.0",
+  "description": "Handles CloudFormation tasks such as creating and updating stacks and change sets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "marcilio@amazon.com",
+  "license": "ISC"
+}

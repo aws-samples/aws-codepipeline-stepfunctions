@@ -1,0 +1,15 @@
+{
+  "name": "pipeline_actions",
+  "version": "1.0.0",
+  "description": "Lambda functions invoked by CodePipeline actions",
+  "main": "register_code_change.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "marcilio@amazon.com",
+  "license": "ISC",
+  "dependencies": {
+    "aws-sdk": "^2.116.0",
+    "pipeline_utils": "file:../../local_modules/pipeline_utils.tar.gz"
+  }
+}
