@@ -1,0 +1,223 @@
+# Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the Amazon Software License (the "License").
+# You may not use this file except in compliance with the License.
+# A copy of the License is located at
+#
+# http://aws.amazon.com/asl/
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  CreateStackStateMachineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CreateStackStateMachineTask
+      Handler: create_stack.handler
+      Runtime: nodejs6.10
+      MemorySize: 128
+      Timeout: 30
+      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+  CheckStackExistsStateMachineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CheckStackExistsStateMachineTask
+      Handler: check_stack_exists.handler
+      Runtime: nodejs6.10
+      MemorySize: 128
+      Timeout: 30
+      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+  CreateChangeSetStateMachineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CreateChangeSetStateMachineTask
+      Handler: create_change_set.handler
+      Runtime: nodejs6.10
+      MemorySize: 128
+      Timeout: 30
+      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+  CheckStackCreationStatusStateMachineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CheckStackCreationStatusStateMachineTask
+      Handler: check_stack_creation_status.handler
+      Runtime: nodejs6.10
+      MemorySize: 128
+      Timeout: 30
+      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+  CheckChangeSetCreationStatusStateMachineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: CheckChangeSetCreationStatusStateMachineTask
+      Handler: check_change_set_creation_status.handler
+      Runtime: nodejs6.10
+      MemorySize: 128
+      Timeout: 30
+      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+  ExecuteChangeSetStateMachineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: ExecuteChangeSetStateMachineTask
+      Handler: execute_change_set.handler
+      Runtime: nodejs6.10
+      MemorySize: 128
+      Timeout: 30
+      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+  InspectChangeSetStateMachineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: InspectChangeSetStateMachineTask
+      Handler: inspect_change_set.handler
+      Runtime: nodejs6.10
+      MemorySize: 128
+      Timeout: 30
+      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+  DeleteChangeSetStateMachineTask:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: DeleteChangeSetStateMachineTask
+      Handler: delete_change_set.handler
+      Runtime: nodejs6.10
+      MemorySize: 128
+      Timeout: 30
+      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+  CodePipelineStepFunctionsStateMachine:
+    Type: AWS::StepFunctions::StateMachine
+    Properties:
+      DefinitionString: 
+        !Sub |
+          {
+            "Comment": "A sample state machine called from AWS CodePipeline that deploys a Lambda function through Cloudformation",
+            "StartAt": "Check Stack Existence",
+            "States": {
+              "Check Stack Existence": {
+                "Type": "Task",
+                "ResultPath": "$.doesStackExists",
+                "OutputPath": "$",
+                "Resource": "${CheckStackExistsStateMachineTask.Arn}",
+                "Next": "Does Stack Exist?"
+              },
+              "Does Stack Exist?": {
+                "Type": "Choice",
+                "Choices": [
+                  {
+                    "Variable": "$.doesStackExists",
+                    "BooleanEquals": false,
+                    "Next": "Create Stack"
+                  }
+                ],
+                "Default": "Create Change Set"
+              },
+              "Create Stack": {
+                "Type": "Task",
+                "ResultPath": "$.stackCreationDetails",
+                "OutputPath": "$",
+                "Resource": "${CreateStackStateMachineTask.Arn}",
+                "Next": "Wait Stack Creation"
+              },
+              "Wait Stack Creation": {
+                "Type": "Wait",
+                "Seconds": 10,
+                "Next": "Get Stack Creation Status"
+              },
+              "Get Stack Creation Status": {
+                "Type": "Task",
+                "ResultPath": "$.stackCreationStatus",
+                "OutputPath": "$",
+                "Resource": "${CheckStackCreationStatusStateMachineTask.Arn}",
+                "Next": "Stack Created?"
+              },
+              "Stack Created?": {
+                "Type": "Choice",
+                "Choices": [
+                  {
+                    "Variable": "$.stackCreationStatus",
+                    "StringEquals": "complete",
+                    "Next": "Deployment Succeeded"
+                  }
+                ],
+                "Default": "Wait Stack Creation"
+              },
+              "Create Change Set": {
+                "Type": "Task",
+                "ResultPath": "$.changeSetName",
+                "OutputPath": "$",
+                "Resource": "${CreateChangeSetStateMachineTask.Arn}",
+                "Next": "Wait Change Set Creation"
+              },
+              "Wait Change Set Creation": {
+                "Type": "Wait",
+                "Seconds": 10,
+                "Next": "Get Change Set Creation Status"
+              },
+              "Get Change Set Creation Status": {
+                "Type": "Task",
+                "ResultPath": "$.changeSetCreationStatus",
+                "OutputPath": "$",
+                "Resource": "{$CheckChangeSetCreationStatusStateMachineTask.Arn}",
+                "Next": "Change Set Created?"
+              },
+              "Change Set Created?": {
+                "Type": "Choice",
+                "Choices": [
+                  {
+                    "Variable": "$.changeSetCreationStatus",
+                    "StringEquals": "complete",
+                    "Next": "Inspect Change Set Changes"
+                  }
+                ],
+                "Default": "Wait Change Set Creation"
+              },
+              "Inspect Change Set Changes": {
+                "Type": "Task",
+                "ResultPath": "$.changeSetAction",
+                "OutputPath": "$",
+                "Resource": "${InspectChangeSetStateMachineTask.Arn}",
+                "Next": "Safe to Update Infra?"
+              },
+              "Safe to Update Infra?": {
+                "Type": "Choice",
+                "Choices": [
+                  {
+                    "Variable": "$.changeSetAction",
+                    "StringEquals": "CAN-SAFELY-UPDATE-EXISTING-STACK",
+                    "Next": "Execute Change Set"
+                  }
+                ],
+                "Default": "Delete Change Set"
+              },
+              "Execute Change Set": {
+                "Type": "Task",
+                "ResultPath": "$.changeSetExecutionDetails",
+                "OutputPath": "$",
+                "Resource": "${ExecuteChangeSetStateMachineTask.Arn}",
+                "Next": "Deployment Succeeded"
+              },
+              "Delete Change Set": {
+                "Type": "Task",
+                "ResultPath": "$.changeSetDeletionDetails",
+                "OutputPath": "$",
+                "Resource": "${ExecuteChangeSetStateMachineTask.Arn}",
+                "Next": "Deployment Failed"
+              },
+              "Deployment Succeeded": {
+                "Type": "Succeed"
+              },
+              "Deployment Failed": {
+                "Type": "Fail",
+                "Cause": "Deployment Failed",
+                "Error": "Deployment Failed"
+              }
+            }
+          }
+      RoleArn: arn:aws:iam::665243897136:role/service-role/StatesExecutionRole-us-east-1
+Outputs:
+  CodePipelineStepFunctionsStateMachineArn:
+    Value: !Ref CodePipelineStepFunctionsStateMachine
+    Export:
+      Name: !Sub "${AWS::StackName}-CodePipelineStepFunctionsStateMachineArn"

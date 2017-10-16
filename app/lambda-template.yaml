@@ -35,11 +35,16 @@ Resources:
   SampleLambdaFunction:
     Type: "AWS::Lambda::Function"
     Properties:
-      FunctionName: !Sub ${environmentName}_SampleLambdaFunction1
+      FunctionName: !Sub ${environmentName}_SampleLambdaFunction
       Handler: "index.handler"
       Code:
-        S3Bucket: "sample-lambda-mitel"
-        S3Key: "simple_lambda_function.zip"
+        ZipFile: !Sub |
+          'use strict';
+          exports.handler = (event, context, callback) => {
+              console.log('Environment: ${environmentName}');
+              console.log('Received event:', JSON.stringify(event));
+              callback(null, JSON.stringify(event));
+          };
       Runtime: "nodejs6.10"
       Timeout: "60"
       Role:

@@ -12,4 +12,4 @@
 # ./run_local.sh InspectChangeSetStateMachineTask inspect_change_set
 
 echo "Running lambda function locally: '$1'..."
-sam local invoke "$1" -e "./test_events/event_$2.json" -t lambda_template.yaml
+sam local invoke "$1" -e "./test_events/event_$2.json" -t state_machine_template.yaml

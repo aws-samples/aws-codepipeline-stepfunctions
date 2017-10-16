@@ -1,0 +1,92 @@
+# Copyright 2012-2017 Amazon.com, Inc. or its affiliates. All Rights Reserved.
+#
+# Licensed under the Amazon Software License (the "License").
+# You may not use this file except in compliance with the License.
+# A copy of the License is located at
+#
+# http://aws.amazon.com/asl/
+#
+# or in the "license" file accompanying this file. This file is distributed
+# on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
+# express or implied. See the License for the specific language governing
+# permissions and limitations under the License.
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Parameters:
+  CodePipelineS3Bucket:
+    Type: "String"
+    Description: "CodePipeline S3 bucket"
+  StateMachineS3Bucket:
+    Type: "String"
+    Description: "S3 bucket to fetch the state machine input parameters file from"
+  StateMachineInputParamsFile:
+    Type: "String"
+    Default: "state_machine_input.json"
+    Description: "State machine input parameters file"
+  StateMachineStackName:
+    Type: "String"
+    Description: "State machine Cloudformation stack name"
+Resources:
+  StateMachineTriggerLambda:
+      Type: AWS::Serverless::Function
+      Properties:
+        FunctionName: StateMachineTriggerLambda
+        Handler: state_machine_trigger.index
+        Runtime: nodejs6.10
+        MemorySize: 128
+        Timeout: 30
+        Role: arn:aws:iam::665243897136:role/hello-lambda-role
+        Environment:
+          Variables:
+            stateMachineArn: 
+              Fn::ImportValue: 
+                !Sub "${StateMachineStackName}-CodePipelineStepFunctionsStateMachineArn"
+  CodeCommitRepo:
+    Type: "AWS::CodeCommit::Repository"
+    Properties: 
+      RepositoryDescription: "AWS CodePipeline and Step Functions integration sample app repository"
+      RepositoryName: "CodePipelineStepFunctionsRepo"
+  CodePipelinePipeline: 
+    Type: "AWS::CodePipeline::Pipeline"
+    Properties:
+      Name: CodePipelineStepFunctionsPipeline
+      RoleArn: arn:aws:iam::665243897136:role/AWS-CodePipeline-Service
+      ArtifactStore:
+        Location: !Ref CodePipelineS3Bucket 
+        Type: S3
+      Stages: 
+        - 
+          Name: Source
+          Actions: 
+            - 
+              Name: Source
+              ActionTypeId: 
+                Category: Source
+                Owner: AWS
+                Version: 1
+                Provider: CodeCommit
+              OutputArtifacts: 
+                - 
+                  Name: SourceOutput
+              Configuration: 
+                BranchName: master
+                RepositoryName: !GetAtt CodeCommitRepo.Name
+              RunOrder: 1
+        - 
+          Name: Prod
+          Actions: 
+            - 
+              Name: Deploy
+              InputArtifacts: 
+                - 
+                  Name: SourceOutput
+              ActionTypeId: 
+                Category: Invoke
+                Owner: AWS
+                Version: 1
+                Provider: Lambda
+              Configuration: 
+                FunctionName: !Ref StateMachineTriggerLambda
+                UserParameters: !Sub "{\"s3Bucket\": \"${StateMachineS3Bucket}\", \"stateMachineFile\": \"${StateMachineInputParamsFile}\"}"
+              RunOrder: 1

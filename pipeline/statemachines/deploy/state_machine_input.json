@@ -1,5 +1,5 @@
 {
   "environmentName": "prod",
   "stackName": "sample-lambda-app",
-  "templatePath": "infra/lambda-template.yaml"
+  "templatePath": "lambda-template.yaml"
 }
