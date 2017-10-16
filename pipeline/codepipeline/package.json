@@ -9,7 +9,7 @@
   "author": "marcilio@amazon.com",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.116.0",
-    "pipeline_utils": "file:../../local_modules/pipeline_utils.tar.gz"
+    "aws-sdk": "^2.134.0",
+    "pipeline_utils": "file:../local_modules/pipeline_utils.tar.gz"
   }
 }
