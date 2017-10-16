@@ -1,10 +1,4 @@
 /*
- * Several functions and objects in this module copied and/or modified from GitHub's repository:
- * https://github.com/stelligent/dromedary-serverless/blob/master/pipeline/lambda/index.js 
- * (MIT license).
- *
- * ============================================================================
- * 
  * Copyright 2012-2016 Amazon.com, Inc. or its affiliates. All Rights Reserved.
  *
  * Licensed under the Amazon Software License (the "License").
@@ -17,10 +11,21 @@
  * on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either
  * express or implied. See the License for the specific language governing
  * permissions and limitations under the License.
+ * 
+ * **********************
+ * THIRD PARTY COMPONENTS
+ * **********************
+ * This software includes third party software subject to the following copyrights:
+ *
+ * https://github.com/stelligent/dromedary-serverless/blob/master/pipeline/lambda/index.js , MIT License
+ *
+ * The licenses for these third party components are included in LICENSE.txt
  */
 
 var AWS = require('aws-sdk');
 var codePipeline = new AWS.CodePipeline();
+
+/********** BEGIN THIRD PARTY COMPONENTS ***********/
 
 var fs = require('fs');
 var yauzl = require("yauzl"); // for .zip
@@ -264,6 +269,8 @@ Util.zipDirectory = function (dirToZip, destZipFile) {
     });
   });
 }
+
+/********** END THIRD PARTY COMPONENTS ***********/
 
 Util.getPipelineExecutionId = function (pipelineName, stageName, actionName, lambdaFunctionName, actionMustBeRunningNow = false) {
   var params = {

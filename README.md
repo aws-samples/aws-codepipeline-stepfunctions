@@ -2,7 +2,7 @@
 
 Welcome to __aws-codepipeline-stepfunctions__ project! 
 
-How about delegating complex CodePipeline actions to a proper state machine and keep your pipeline clean and and easy to understand? 
+How about delegating complex CodePipeline tasks to a proper state machine and keep your pipeline clean and and easy to understand? 
 
 
 
@@ -12,9 +12,9 @@ This AWS Labs project shows how to integrate AWS CodePipeline and AWS Step Funct
 
 Please install the following software in your local workstation before proceeding:
 
-* Install a [Git client](https://git-scm.com/downloads)
+* [Git client](https://git-scm.com/downloads)
 
-* Latest version of the [AWS Command Line Interface](http://docs.aws.amazon.com/cli/latest/userguide/installing.html)
+* [AWS Command Line Interface](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) (version 1.11.170 or greater)
 
 * Configure your AWS credentials and make sure your credentials allow you to create all required resources (S3, CodeCommit, CodePipeline, Lambda, StepFunctions, IAM): 
 
@@ -30,7 +30,7 @@ If you plan to develop and contribute to the project it's a good idea to use SAM
 
 ## Directory structure
 
-* __app/__ - simple Lambda function (src/index.js) and corresponding CloudFormation template (infra/lambda-template.yaml). This code will be pushed into CodeCommit to kick off CodePipeline which then triggers the Step Functions state machine
+* __app/__ - contains a CloudFormation template that represents the application being deployed via CodePipeline/Step Functions.
 
 * __pipeline/codepipeline__ - CodePipeline resources
 
@@ -106,14 +106,39 @@ You can now open the AWS Console and check the various resources created for you
 
 ## Contributing
 
-If you wish to contribute to the project you might want to run and debug Lambda code locally using [AWS SAM Local](https://github.com/awslabs/aws-sam-local). A _run\_local.sh_ script is available under _pipeline/codepipeline_ and _pipeline/statemachine/deploy_ to make things easier. Open the scripts to see comments on how to invoke the script.
+### Running Locally
 
-The test events are located under _test\_events_/ and might contain account-specific parameters that must be customized. 
+If you wish to contribute to the project it's definitely a good idea to use [AWS SAM Local](https://github.com/awslabs/aws-sam-local) to run and debug Lambda functions locally. A _run\_local.sh_ script is available under _pipeline/codepipeline_ and _pipeline/statemachine/deploy_ for convenience.
 
-Here's an example of how to invoke the _CreateStackStateMachineTask_ Lambda function referenced by template _state\_machine\_template.yaml_ using the corresponding test event file _test\_events/event\_create\_stack.json_
+In order to run Lambda functions locally, SAM local requires test event to be passed as input to the Lambda functions. Sample test events are provided under _test\_events_/ and might contain account-specific parameters that must be customized. 
+
+Here's an example of how to invoke the _CreateStackStateMachineTask_ Lambda function:
 
 ```bash
   cd pipeline/statemachines/deploy
   ./run_local.sh CreateStackStateMachineTask create_stack
 ```
 
+Note that template _state\_machine\_template.yaml_ and test event file _test\_events/event\_create\_stack.json_ are referenced within the script.
+
+### Local Modules
+
+Changes to local modules (under _pipeline/local\_modules) require that the modules that include these local modules are updated.
+
+This can be accomplished by running these templates:
+
+```bash
+ # pack changes made to local modules
+ cd pipeline/local_modules
+ ./pack_modules.sh
+   
+ # update local modules for codepipeline
+ cd pipeline/codepipeline
+ ./install_modules.sh
+   
+ # update local modules for statemachines deploy
+ cd pipeline/statemachines/deploy
+ ./install_modules.sh
+```
+
+Have fun and contribute!

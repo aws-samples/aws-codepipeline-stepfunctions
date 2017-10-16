@@ -14,6 +14,38 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Transform: AWS::Serverless-2016-10-31
 Resources:
+  StateMachineLambdaRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies: 
+        - 
+          PolicyName: "cloudformation"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action:
+                  - "cloudformation:Get*"
+                  - "cloudformation:List*"
+                  - "cloudformation:DescribeChangeSet"
+                  - "cloudformation:UpdateStack"
+                  - "cloudformation:CreateStack"
+                  - "cloudformation:DeleteChangeSet"
+                  - "cloudformation:ExecuteChangeSet"
+                  - "cloudformation:CreateChangeSet"
+                Resource: "*"
   CreateStackStateMachineTask:
     Type: AWS::Serverless::Function
     Properties:
@@ -22,7 +54,7 @@ Resources:
       Runtime: nodejs6.10
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+      Role: !GetAtt StateMachineLambdaRole.Arn
   CheckStackExistsStateMachineTask:
     Type: AWS::Serverless::Function
     Properties:
@@ -31,7 +63,7 @@ Resources:
       Runtime: nodejs6.10
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+      Role: !GetAtt StateMachineLambdaRole.Arn
   CreateChangeSetStateMachineTask:
     Type: AWS::Serverless::Function
     Properties:
@@ -40,7 +72,7 @@ Resources:
       Runtime: nodejs6.10
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+      Role: !GetAtt StateMachineLambdaRole.Arn
   CheckStackCreationStatusStateMachineTask:
     Type: AWS::Serverless::Function
     Properties:
@@ -49,7 +81,7 @@ Resources:
       Runtime: nodejs6.10
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+      Role: !GetAtt StateMachineLambdaRole.Arn
   CheckChangeSetCreationStatusStateMachineTask:
     Type: AWS::Serverless::Function
     Properties:
@@ -58,7 +90,7 @@ Resources:
       Runtime: nodejs6.10
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+      Role: !GetAtt StateMachineLambdaRole.Arn
   ExecuteChangeSetStateMachineTask:
     Type: AWS::Serverless::Function
     Properties:
@@ -67,7 +99,7 @@ Resources:
       Runtime: nodejs6.10
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+      Role: !GetAtt StateMachineLambdaRole.Arn
   InspectChangeSetStateMachineTask:
     Type: AWS::Serverless::Function
     Properties:
@@ -76,7 +108,7 @@ Resources:
       Runtime: nodejs6.10
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+      Role: !GetAtt StateMachineLambdaRole.Arn
   DeleteChangeSetStateMachineTask:
     Type: AWS::Serverless::Function
     Properties:
@@ -85,7 +117,32 @@ Resources:
       Runtime: nodejs6.10
       MemorySize: 128
       Timeout: 30
-      Role: arn:aws:iam::665243897136:role/hello-lambda-role
+      Role: !GetAtt StateMachineLambdaRole.Arn
+  CodePipelineStepFunctionsStateMachineRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies: 
+        - 
+          PolicyName: "cloudformation"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: 
+                  - "lambda:*"
+                Resource: "*"
   CodePipelineStepFunctionsStateMachine:
     Type: AWS::StepFunctions::StateMachine
     Properties:
@@ -215,7 +272,7 @@ Resources:
               }
             }
           }
-      RoleArn: arn:aws:iam::665243897136:role/service-role/StatesExecutionRole-us-east-1
+      RoleArn: !GetAtt CodePipelineStepFunctionsStateMachineRole.Arn
 Outputs:
   CodePipelineStepFunctionsStateMachineArn:
     Value: !Ref CodePipelineStepFunctionsStateMachine

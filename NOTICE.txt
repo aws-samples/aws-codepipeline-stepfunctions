@@ -1,0 +1,8 @@
+**********************
+THIRD PARTY COMPONENTS
+**********************
+This software includes third party software subject to the following copyrights:
+
+- pipeline_utils.js - The MIT License (MIT)
+
+The licenses for these third party components are included in LICENSE.txt

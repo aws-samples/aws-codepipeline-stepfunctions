@@ -28,30 +28,117 @@ Parameters:
     Type: "String"
     Description: "State machine Cloudformation stack name"
 Resources:
+  StateMachineTriggerLambdaRole: 
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "lambda.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies: 
+        - 
+          PolicyName: "stepfunctions"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: 
+                  - "states:*"
+                Resource:
+                  Fn::ImportValue: 
+                    !Sub "${StateMachineStackName}-CodePipelineStepFunctionsStateMachineArn"
+        - 
+          PolicyName: "codepipeline"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: 
+                  - "codepipeline:Put*"
+                Resource: "*"
   StateMachineTriggerLambda:
-      Type: AWS::Serverless::Function
-      Properties:
-        FunctionName: StateMachineTriggerLambda
-        Handler: state_machine_trigger.index
-        Runtime: nodejs6.10
-        MemorySize: 128
-        Timeout: 30
-        Role: arn:aws:iam::665243897136:role/hello-lambda-role
-        Environment:
-          Variables:
-            stateMachineArn: 
-              Fn::ImportValue: 
-                !Sub "${StateMachineStackName}-CodePipelineStepFunctionsStateMachineArn"
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: StateMachineTriggerLambda
+      Handler: state_machine_trigger.index
+      Runtime: nodejs6.10
+      MemorySize: 128
+      Timeout: 30
+      Role: !GetAtt StateMachineTriggerLambdaRole.Arn
+      Environment:
+        Variables:
+          stateMachineArn: 
+            Fn::ImportValue: 
+              !Sub "${StateMachineStackName}-CodePipelineStepFunctionsStateMachineArn"
   CodeCommitRepo:
     Type: "AWS::CodeCommit::Repository"
     Properties: 
       RepositoryDescription: "AWS CodePipeline and Step Functions integration sample app repository"
       RepositoryName: "CodePipelineStepFunctionsRepo"
+  CodePipelinePipelineRole:
+    Type: "AWS::IAM::Role"
+    Properties: 
+      AssumeRolePolicyDocument: 
+        Version: "2012-10-17"
+        Statement: 
+          - 
+            Effect: "Allow"
+            Principal: 
+              Service: 
+                - "codepipeline.amazonaws.com"
+            Action: 
+              - "sts:AssumeRole"
+      Path: "/"
+      Policies: 
+        - 
+          PolicyName: "lambda"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: 
+                  - "lambda:*"
+                Resource: !GetAtt StateMachineTriggerLambda.Arn
+              - 
+                Effect: "Allow"
+                Action: 
+                  - "lambda:List*"
+                Resource: "*"
+        - 
+          PolicyName: "s3"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: 
+                  - "s3:*"
+                Resource: !Sub "arn:aws:s3:::${CodePipelineS3Bucket}/*"
+        - 
+          PolicyName: "codecommit"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: 
+                  - "codecommit:*"
+                Resource: !GetAtt CodeCommitRepo.Arn
   CodePipelinePipeline: 
     Type: "AWS::CodePipeline::Pipeline"
     Properties:
       Name: CodePipelineStepFunctionsPipeline
-      RoleArn: arn:aws:iam::665243897136:role/AWS-CodePipeline-Service
+      RoleArn: !GetAtt CodePipelinePipelineRole.Arn
       ArtifactStore:
         Location: !Ref CodePipelineS3Bucket 
         Type: S3
