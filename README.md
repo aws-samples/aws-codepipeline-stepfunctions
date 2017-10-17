@@ -17,7 +17,7 @@ This project shows you how to integrate AWS CodePipeline and AWS Step Functions 
 
 * __pipeline/local_modules__ - required local npm modules
 
-* __pipeline/__docs__ - project's documentation artifacts
+* __pipeline/docs__ - project's documentation artifacts
 
 ## Required Software
 
