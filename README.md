@@ -74,7 +74,7 @@ Important: Make sure the AWS profile chosen uses an AWS region that supports AWS
 
 ```bash
   cd pipeline/
-  ./bootstrap.sh [AWS-PROFILE-NAME] (or leave it blank to use the default profile)
+  ./bootstrap.sh
 ```
 
 The _bootstrap_ script will create all necessary resources including:
@@ -87,11 +87,13 @@ The _bootstrap_ script will create all necessary resources including:
 
 ### Push Code and Trigger CodePipeline
 
-You can now open the AWS Console and check the various resources created for you. Note that the CodePipeline pipeline is in a failing state since the CodeCommit repository does not have any code. The next step will be to push code to CodeCommit which will then trigger the pipeline. 
+Once the bootstrap script completes, open the AWS Console and check the various resources created for you including a CodeCommit repository, a CodePipeline pipeline, a Step Functions state machine, three S3 buckets, and IAM roles. Note that the CodePipeline pipeline is in a failing state since the CodeCommit repository does not have any code. The next step will be to push code to the CodeCommit repository which will cause the pipeline to start processing the changes. 
+
+Let's add code to the repository.
 
 * Using the AWS Console, navigate to the CodeCommit repository created for you
 
-* Click on "Connect" or follow [these instructions](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-connect.html) to set up credentials to clone your CodeCommit repository (via SSH or HTTP)
+* Click on "Connect" or follow [these instructions](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-connect.html) to set up credentials to your IAM user to allow you to clone the CodeCommit repository (via SSH or HTTPS). 
 
 * Back in your local workstation. From the project's root directory, type:
 
@@ -103,7 +105,9 @@ You can now open the AWS Console and check the various resources created for you
   git push codecommit master
 ```
 
-Once code is pushed to the repository, CodePipeline starts running. The _Source_ pipeline action will simply load the source code from CodeCommit into an S3 bucket. Next, the _Deploy_ action invokes the _StateMachineTriggerLambda_ Lambda function which, in turn, fetches the state machine input parameters from a file in S3 and triggers the state machine (see figure above for further details). The state machine starts executing while the _StateMachineTriggerLambda_ Lambda sends a continuation token to CodePipeline and terminates. Seconds later, the _StateMachineTriggerLambda_ Lambda is invoked again by CodePipeline. The Lambda will check whether the state machine execution has completed and, if that's the case, it will notify the pipeline that the pipeline action succeeded. If otherwise the state machine has failed, the Lambda will send a failure response to the pipeline action interrupting the pipeline execution. The _StateMachineTriggerLambda_ Lambda fully decouples the pipeline from the state machine.
+This will push code into the CodeCommit repository and trigger the CodePipeline pipeline after a few seconds. 
+
+Open the CodePipeline Console and follow the execution of the pipeline. The _Source_ pipeline action will simply load the source code from CodeCommit into an S3 bucket. The _Deploy_ action invokes the _StateMachineTriggerLambda_ Lambda function which, in turn, fetches the state machine input parameters from a file in S3 and triggers the state machine (see figure above for further details). The state machine starts executing while the _StateMachineTriggerLambda_ Lambda sends a continuation token to CodePipeline and terminates. Seconds later, the _StateMachineTriggerLambda_ Lambda is invoked again by CodePipeline. The Lambda will check whether the state machine execution has completed and, if that's the case, it will notify the pipeline that the pipeline action succeeded. If otherwise the state machine has failed, the Lambda will send a failure response to the pipeline action interrupting the pipeline execution. The _StateMachineTriggerLambda_ Lambda fully decouples the pipeline from the state machine.
  
 For further details please read our AWS DevOps blog post: [TODO]
 

@@ -13,8 +13,8 @@
 # permissions and limitations under the License.
 
 #!/bin/bash
-set +e
  
+# Use the default AWS profile or enter a specific profile you wish to use
 export AWS_PROFILE="default"
 
 root_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
