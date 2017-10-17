@@ -18,6 +18,12 @@ set -e
 function execute {
     local base_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
+    . "${base_dir}/config.sh"
+    echo $'\n[== Bootstraping aws-codepipeline-stepfunctions ==]'
+    echo "- AWS Profile...: $AWS_PROFILE" 
+    echo "- AWS Account Id: $AWS_ACCOUNT_ID" 
+    echo "- AWS Region....: $AWS_REGION"
+
     # create state machine lambda function(s)
     . "${base_dir}/statemachines/deploy/deploy.sh"
 

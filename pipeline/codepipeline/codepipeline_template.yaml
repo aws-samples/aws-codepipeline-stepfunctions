@@ -42,6 +42,8 @@ Resources:
             Action: 
               - "sts:AssumeRole"
       Path: "/"
+      ManagedPolicyArns: 
+        -  arn:aws:iam::aws:policy/AWSLambdaExecute
       Policies: 
         - 
           PolicyName: "stepfunctions"
@@ -52,9 +54,9 @@ Resources:
                 Effect: "Allow"
                 Action: 
                   - "states:*"
-                Resource:
-                  Fn::ImportValue: 
-                    !Sub "${StateMachineStackName}-CodePipelineStepFunctionsStateMachineArn"
+                Resource: "*"
+                  # Fn::ImportValue: 
+                  #   !Sub "${StateMachineStackName}-CodePipelineStepFunctionsStateMachineArn"
         - 
           PolicyName: "codepipeline"
           PolicyDocument: 
@@ -63,7 +65,7 @@ Resources:
               - 
                 Effect: "Allow"
                 Action: 
-                  - "codepipeline:Put*"
+                  - "codepipeline:*"
                 Resource: "*"
   StateMachineTriggerLambda:
     Type: AWS::Serverless::Function

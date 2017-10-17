@@ -1,6 +1,5 @@
-
 AWSTemplateFormatVersion: '2010-09-09'
-Description: 'Creates a sample lambda function'
+Description: 'Creates a Lambda function'
 Parameters:
   environmentName:
     Type: String
@@ -51,19 +50,3 @@ Resources:
         Fn::GetAtt:
           - "LambdaExecutionRole"
           - "Arn"
-  SampleLambdaFunctionVersion: 
-    Type: "AWS::Lambda::Version"
-    Properties: 
-      FunctionName: 
-        Ref: "SampleLambdaFunction"
-      Description: "SampleLambdaFunction version"
-  SampleLambdaFunctionAlias: 
-    Type: "AWS::Lambda::Alias"
-    Properties: 
-      FunctionName: 
-        Ref: "SampleLambdaFunction"
-      FunctionVersion: 
-        Fn::GetAtt: 
-          - "SampleLambdaFunctionVersion"
-          - "Version"
-      Name: !Sub ${environmentName}

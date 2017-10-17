@@ -28,7 +28,3 @@ export PROJECT_PREFIX="cpsf" # [C]ode [P]ipeline [S]tep [F]unctions
 export PIPELINE_LAMBDAS_S3_BUCKET="${PROJECT_PREFIX}-lambda-functions-${AWS_ACCOUNT_ID}-${AWS_REGION}"
 export STATE_MACHINE_S3_BUCKET="${PROJECT_PREFIX}-state-machine-input-${AWS_ACCOUNT_ID}-${AWS_REGION}"
 export CODEPIPELINE_S3_BUCKET="${PROJECT_PREFIX}-codepipeline-artifacts-${AWS_ACCOUNT_ID}-${AWS_REGION}"
-
-echo "AWS Profile...: $AWS_PROFILE" 
-echo "AWS Account Id: $AWS_ACCOUNT_ID" 
-echo "AWS Region....: $AWS_REGION"

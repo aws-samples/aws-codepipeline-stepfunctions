@@ -18,6 +18,7 @@
 # ./run_local.sh CreateStackStateMachineTask create_stack
 # ./run_local.sh CheckStackExistsStateMachineTask check_stack_exists
 # ./run_local.sh CreateChangeSetStateMachineTask create_change_set
+# ./run_local.sh CreateChangeSetStateMachineTask delete_change_set
 # ./run_local.sh CheckStackCreationStatusStateMachineTask check_stack_creation_status
 # ./run_local.sh CheckChangeSetCreationStatusStateMachineTask check_change_set_creation_status
 # ./run_local.sh ExecuteChangeSetStateMachineTask execute_change_set

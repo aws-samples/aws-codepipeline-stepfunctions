@@ -1,28 +1,29 @@
 {
     "CodePipeline.job": {
-        "id": "7015f54a-697b-4a0f-bbdf-533eeab4d892",
+        "id": "dcf38b42-6d6c-4fca-9cd6-179db00193ef",
+        "accountId": "123456789012",
         "data": {
             "actionConfiguration": {
                 "configuration": {
-                    "FunctionName": "StateMachineTrigger",
-                    "UserParameters": "{\"s3Bucket\": \"codepipeline-stepfunctions-sample\", \"stateMachineFile\": \"sf_deploy_state_machine_tasks.json\"}"
+                    "FunctionName": "StateMachineTriggerLambda",
+                    "UserParameters": "{\"s3Bucket\": \"cpsf-state-machine-input-123456789012-us-east-2\", \"stateMachineFile\": \"state_machine_input.json\"}"
                 }
             },
             "inputArtifacts": [
                 {
                     "location": {
                         "s3Location": {
-                            "bucketName": "codepipeline-us-east-1-418586629775",
-                            "objectKey": "SamplePipelineStepFu/MyApp/YoIU8Hm"
+                            "bucketName": "cpsf-codepipeline-artifacts-123456789012-us-east-2",
+                            "objectKey": "CodePipelineStepFunc/SourceOutp/s3Nlu2W"
                         },
                         "type": "S3"
                     },
-                    "revision": "70a10455448b7725747bb329e8a53021f79174be",
-                    "name": "MyApp"
+                    "revision": "b4776db2dca12b4cefb32aceb2fd23abba9eaec6",
+                    "name": "SourceOutput"
                 }
             ],
             "outputArtifacts": [],
-            "continuationToken": "{\"stateMachineExecutionArn\":\"arn:aws:states:us-east-1:665243897136:execution:deploy-serverless-app-cic3:execution-1504728583317\"}"
+            "continuationToken": "{\"stateMachineExecutionArn\":\"arn:aws:states:us-east-1:123456789012:execution:deploy-serverless-app-cic3:execution-1504728583317\"}"            
         }
     }
 }

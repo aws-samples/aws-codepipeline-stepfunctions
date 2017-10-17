@@ -28,6 +28,8 @@ Resources:
             Action: 
               - "sts:AssumeRole"
       Path: "/"
+      ManagedPolicyArns: 
+        -  arn:aws:iam::aws:policy/AWSLambdaExecute
       Policies: 
         - 
           PolicyName: "cloudformation"
@@ -37,14 +39,32 @@ Resources:
               - 
                 Effect: "Allow"
                 Action:
-                  - "cloudformation:Get*"
-                  - "cloudformation:List*"
-                  - "cloudformation:DescribeChangeSet"
-                  - "cloudformation:UpdateStack"
-                  - "cloudformation:CreateStack"
-                  - "cloudformation:DeleteChangeSet"
-                  - "cloudformation:ExecuteChangeSet"
-                  - "cloudformation:CreateChangeSet"
+                  - "cloudformation:*"
+                Resource: "*"
+        - 
+          PolicyName: "iam"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action:
+                  - "iam:CreateRole"
+                  - "iam:PutRolePolicy"
+                  - "iam:DeleteRolePolicy"
+                  - "iam:DeleteRole"
+                  - "iam:GetRole"
+                  - "iam:PassRole"
+                Resource: "*"
+        - 
+          PolicyName: "lambda"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action:
+                  - "lambda:*"
                 Resource: "*"
   CreateStackStateMachineTask:
     Type: AWS::Serverless::Function
@@ -118,7 +138,7 @@ Resources:
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineLambdaRole.Arn
-  CodePipelineStepFunctionsStateMachineRole: 
+  StepFunctionsStateMachineRole: 
     Type: "AWS::IAM::Role"
     Properties: 
       AssumeRolePolicyDocument: 
@@ -128,24 +148,25 @@ Resources:
             Effect: "Allow"
             Principal: 
               Service: 
-                - "lambda.amazonaws.com"
+                - !Sub "states.${AWS::Region}.amazonaws.com"
             Action: 
               - "sts:AssumeRole"
       Path: "/"
       Policies: 
         - 
-          PolicyName: "cloudformation"
+          PolicyName: "lambda"
           PolicyDocument: 
             Version: "2012-10-17"
             Statement: 
               - 
                 Effect: "Allow"
                 Action: 
-                  - "lambda:*"
+                  - "lambda:InvokeFunction"
                 Resource: "*"
-  CodePipelineStepFunctionsStateMachine:
-    Type: AWS::StepFunctions::StateMachine
+  StepFunctionsStateMachine:
+    Type: AWS::StepFunctions::StateMachine 
     Properties:
+      RoleArn: !GetAtt StepFunctionsStateMachineRole.Arn
       DefinitionString: 
         !Sub |
           {
@@ -272,9 +293,12 @@ Resources:
               }
             }
           }
-      RoleArn: !GetAtt CodePipelineStepFunctionsStateMachineRole.Arn
 Outputs:
   CodePipelineStepFunctionsStateMachineArn:
-    Value: !Ref CodePipelineStepFunctionsStateMachine
+    Value: !Ref StepFunctionsStateMachine
     Export:
       Name: !Sub "${AWS::StackName}-CodePipelineStepFunctionsStateMachineArn"
+  CodePipelineStepFunctionsStateMachineName:
+    Value: !GetAtt StepFunctionsStateMachine.Name
+    Export:
+      Name: !Sub "${AWS::StackName}-CodePipelineStepFunctionsStateMachineName"

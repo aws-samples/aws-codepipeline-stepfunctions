@@ -1,12 +1,23 @@
 
+Welcome to the __aws-codepipeline-stepfunctions__ project on AWS Labs! 
 
-Welcome to __aws-codepipeline-stepfunctions__ project! 
-
-How about delegating complex CodePipeline tasks to a proper state machine and keep your pipeline clean and and easy to understand? 
+How about delegating complex CodePipeline tasks to a proper state machine and keeping your pipeline clean and easy to understand? 
 
 ![approach-overview](pipeline/docs/codepipeline_statemachine.png)
 
-This AWS Labs project shows how to integrate AWS CodePipeline and AWS Step Functions state machines. The integration enables developers to build much simpler CodePipeline actions that perform a single task and to delegate the complexity of dealing with workflow-driven behavior associated with that task to a proper state machine engine. As such, developers will be able to build more intuitive pipelines and still being able to visualize and troubleshoot their pipeline actions in detail by examining the state machine execution logs.
+This project shows you how to integrate AWS CodePipeline and AWS Step Functions state machines. The integration enables developers to build much simpler CodePipeline actions that perform a single task and to delegate the complexity of dealing with workflow-driven behavior associated with that task to a proper state machine engine. As such, developers will be able to build more intuitive pipelines and still being able to visualize and troubleshoot their pipeline actions in detail by examining the state machine execution logs.
+
+## Project structure
+
+* __app/__ - contains a CloudFormation template that represents the application being deployed via CodePipeline/Step Functions.
+
+* __pipeline/codepipeline__ - CodePipeline resources
+
+* __pipeline/statemachines__ - Step Functions resources including the _Deploy_ state machine
+
+* __pipeline/local_modules__ - required local npm modules
+
+* __docs__ - documentation-related artifacts
 
 ## Required Software
 
@@ -16,7 +27,7 @@ Please install the following software in your local workstation before proceedin
 
 * [AWS Command Line Interface](http://docs.aws.amazon.com/cli/latest/userguide/installing.html) (version 1.11.170 or greater)
 
-* Configure your AWS credentials and make sure your credentials allow you to create all required resources (S3, CodeCommit, CodePipeline, Lambda, StepFunctions, IAM): 
+* Configure your AWS credentials (access keys, AWS region, etc). At a minimum your credentials should allow you to create and manipulate resources associated withe the following AWS services: Amazon S3, AWS CodeCommit, AWS CodePipeline, AWS Lambda, AWS StepFunctions, and AWS IAM.
 
 ```bash
 aws configure
@@ -27,16 +38,6 @@ aws configure
 If you plan to develop and contribute to the project it's a good idea to use SAM Local:
 
 * [AWS SAM Local](https://github.com/awslabs/aws-sam-local)
-
-## Directory structure
-
-* __app/__ - contains a CloudFormation template that represents the application being deployed via CodePipeline/Step Functions.
-
-* __pipeline/codepipeline__ - CodePipeline resources
-
-* __pipeline/statemachines__ - Step Functions resources including the _Deploy_ state machine
-
-* __pipeline/local_modules__ - required local npm modules
 
 ## Instructions
 
@@ -67,22 +68,20 @@ From the project's root directory, type:
 vi pipeline/config.sh
 ```
 
-Important: Make sure the AWS profile chosen refences an AWS region that supports AWS Step Functions [(check here)](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/).
+Important: Make sure the AWS profile chosen uses an AWS region that supports AWS Step Functions [(check here)](https://aws.amazon.com/about-aws/global-infrastructure/regional-product-services/).
 
 * From the project's root directory run:
 
 ```bash
   cd pipeline/
-  ./bootstrap.sh [AWS-PROFILE-NAME]
+  ./bootstrap.sh [AWS-PROFILE-NAME] (or leave it blank to use the default profile)
 ```
-
-The _Default_ profile will be used if no profile is specified.
 
 The _bootstrap_ script will create all necessary resources including:
 
-* S3 buckets for CodePipeline, Lambda and State Machine
-* CodeCommit repository
+* S3 buckets for CodePipeline, Lambda and the State Machine
 * Several Lambda functions for CodePipeline and Step Functions 
+* The CodeCommit repository
 * The Step Functions state machine
 * The CodePipeline pipeline
 
@@ -92,9 +91,9 @@ You can now open the AWS Console and check the various resources created for you
 
 * Using the AWS Console, navigate to the CodeCommit repository created for you
 
-* Follow [these instructions](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-connect.html) to retrieve your CodeCommit's SSH or HTTP clone URL
+* Click on "Connect" or follow [these instructions](http://docs.aws.amazon.com/codecommit/latest/userguide/how-to-connect.html) to set up credentials to clone your CodeCommit repository (via SSH or HTTP)
 
-* From the project's root directory, type:
+* Back in your local workstation. From the project's root directory, type:
 
 ```bash
   cd app/
@@ -104,15 +103,21 @@ You can now open the AWS Console and check the various resources created for you
   git push codecommit master
 ```
 
+Once code is pushed to the repository, CodePipeline starts running. The _Source_ pipeline action will simply load the source code from CodeCommit into an S3 bucket. Next, the _Deploy_ action invokes the _StateMachineTriggerLambda_ Lambda function which, in turn, fetches the state machine input parameters from a file in S3 and triggers the state machine (see figure above for further details). The state machine starts executing while the _StateMachineTriggerLambda_ Lambda sends a continuation token to CodePipeline and terminates. Seconds later, the _StateMachineTriggerLambda_ Lambda is invoked again by CodePipeline. The Lambda will check whether the state machine execution has completed and, if that's the case, it will notify the pipeline that the pipeline action succeeded. If otherwise the state machine has failed, the Lambda will send a failure response to the pipeline action interrupting the pipeline execution. The _StateMachineTriggerLambda_ Lambda fully decouples the pipeline from the state machine.
+ 
+For further details please read our AWS DevOps blog post: [TODO]
+
 ## Contributing
+
+Here are a few details you need to know if you wish to contribute to this project.
 
 ### Running Locally
 
-If you wish to contribute to the project it's definitely a good idea to use [AWS SAM Local](https://github.com/awslabs/aws-sam-local) to run and debug Lambda functions locally. A _run\_local.sh_ script is available under _pipeline/codepipeline_ and _pipeline/statemachine/deploy_ for convenience.
+Please use [AWS SAM Local](https://github.com/awslabs/aws-sam-local) to run and debug Lambda functions locally. It is really useful and saves a lot of time. A script named _run\_local.sh_ is available under _pipeline/codepipeline_ and _pipeline/statemachine/deploy_ for convenience.
 
-In order to run Lambda functions locally, SAM local requires test event to be passed as input to the Lambda functions. Sample test events are provided under _test\_events_/ and might contain account-specific parameters that must be customized. 
+In order to run Lambda functions locally, SAM local requires that test events are passed as input to the Lambda functions. Sample test events are provided under _test\_events_/. Important: the provided test events might contain account-specific parameters that need to be adjusted.
 
-Here's an example of how to invoke the _CreateStackStateMachineTask_ Lambda function:
+Here is an example of how to invoke the _CreateStackStateMachineTask_ Lambda function:
 
 ```bash
   cd pipeline/statemachines/deploy
@@ -121,22 +126,22 @@ Here's an example of how to invoke the _CreateStackStateMachineTask_ Lambda func
 
 Note that template _state\_machine\_template.yaml_ and test event file _test\_events/event\_create\_stack.json_ are referenced within the script.
 
-### Local Modules
+### Modifying Local Modules
 
-Changes to local modules (under _pipeline/local\_modules) require that the modules that include these local modules are updated.
+If you plan to make changes to local modules (under _pipeline/local\_modules) keep in mind that this requires updating the modules that depend on these local modules.
 
-This can be accomplished by running these templates:
+This can be accomplished by running these scrips:
 
 ```bash
  # pack changes made to local modules
  cd pipeline/local_modules
  ./pack_modules.sh
    
- # update local modules for codepipeline
+ # update codepipeline local modules references
  cd pipeline/codepipeline
  ./install_modules.sh
    
- # update local modules for statemachines deploy
+ # update statemachines/deploy local module references
  cd pipeline/statemachines/deploy
  ./install_modules.sh
 ```

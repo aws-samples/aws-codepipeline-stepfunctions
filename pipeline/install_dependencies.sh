@@ -43,11 +43,4 @@ cd ../..
 
 pwd
 
-echo ""
-echo ""
-echo "Done - You can now run ./boostrap.sh to deploy the project in your AWS account"
-echo ""
-echo ""
-
-
-
+echo $'\n\nDone - You can now run ./boostrap.sh to deploy the project in your AWS account\n\n'

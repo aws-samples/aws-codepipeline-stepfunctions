@@ -1,26 +1,8 @@
 {
-    "taskParams": {
-        "environmentName": "prod",
-        "stackName": "sample-lambda-app",
-        "templatePath": "infra/lambda-template.yaml"        
-    },
-    "CodePipeline.job": {
-        "id": "391d515f-d21b-4ee1-a6f6-2c70194cf4bf",
-        "data": {
-            "inputArtifacts": [
-                {
-                    "location": {
-                        "s3Location": {
-                            "bucketName": "codepipeline-us-east-1-418586629775",
-                            "objectKey": "SamplePipelineStepFu/MyApp/SfBoSNn"
-                        },
-                        "type": "S3"
-                    },
-                    "revision": "1c4b6d59314ab32a9bc5b83eb3c6307ef99ede40",
-                    "name": "MyApp"
-                }
-            ],
-            "outputArtifacts": []
-        }
-    }
+    "environmentName": "prod",
+    "stackName": "sample-lambda-app",
+    "templatePath": "lambda-template.yaml",
+    "revisionS3Bucket": "cpsf-codepipeline-artifacts-123456789012-us-east-2",
+    "revisionS3Key": "CodePipelineStepFunc/SourceOutp/XDgIsez",
+    "doesStackExists": true
 }

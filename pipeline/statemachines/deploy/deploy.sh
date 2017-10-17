@@ -13,6 +13,8 @@
 
 #!/bin/bash
 
+set -e 
+
 function execute {
     local base_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     . "${base_dir}/../../config.sh"
@@ -22,7 +24,9 @@ function execute {
     local output_file="/tmp/state_machine_template-output.yaml"
     local state_machine_input_file="${base_dir}/state_machine_input.json"
 
-    echo "[== Provisioning Step Functions state machine resources ==]"
+    export STATE_MACHINE_STACK_NAME=$stack_name
+
+    echo $'\n[== Provisioning Step Functions state machine resources ==]'
     echo "- stack_name: $stack_name"
     echo "- STATE_MACHINE_S3_BUCKET: $STATE_MACHINE_S3_BUCKET"
     echo "- template: $template"
@@ -34,8 +38,6 @@ function execute {
 
     aws cloudformation package --template-file "$template" --s3-bucket "$STATE_MACHINE_S3_BUCKET" --output-template-file "$output_file"
     aws cloudformation deploy --template-file "$output_file" --stack-name "$stack_name" --capabilities CAPABILITY_IAM
-
-    export STATE_MACHINE_STACK_NAME=$stack_name
 }
 
 execute

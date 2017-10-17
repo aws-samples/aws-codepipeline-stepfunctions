@@ -13,6 +13,8 @@
 
 #!/bin/bash
 
+set -e
+
 function execute {
     local base_dir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
     . "${base_dir}/../config.sh"
@@ -21,7 +23,7 @@ function execute {
     local template="${base_dir}/codepipeline_template.yaml"
     local output_file="/tmp/codepipeline-pipeline-output.yaml"
 
-    echo "[== Provisioning CodePipeline resources ==]"
+    echo $'\n[== Provisioning CodePipeline resources ==]'
     echo "- stack_name: $stack_name"
     echo "- PIPELINE_LAMBDAS_S3_BUCKET: $PIPELINE_LAMBDAS_S3_BUCKET"
     echo "- CODEPIPELINE_S3_BUCKET: $CODEPIPELINE_S3_BUCKET"
