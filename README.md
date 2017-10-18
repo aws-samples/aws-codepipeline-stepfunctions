@@ -109,7 +109,7 @@ This will push code into the CodeCommit repository and trigger the CodePipeline 
 
 Open the CodePipeline Console and follow the execution of the pipeline. The _Source_ pipeline action will simply load the source code from CodeCommit into an S3 bucket. The _Deploy_ action invokes the _StateMachineTriggerLambda_ Lambda function which, in turn, fetches the state machine input parameters from a file in S3 and triggers the state machine (see figure above for further details). The state machine starts executing while the _StateMachineTriggerLambda_ Lambda sends a continuation token to CodePipeline and terminates. Seconds later, the _StateMachineTriggerLambda_ Lambda is invoked again by CodePipeline. The Lambda will check whether the state machine execution has completed and, if that's the case, it will notify the pipeline that the pipeline action succeeded. If otherwise the state machine has failed, the Lambda will send a failure response to the pipeline action interrupting the pipeline execution. The _StateMachineTriggerLambda_ Lambda fully decouples the pipeline from the state machine.
  
-For further details please read our AWS DevOps blog post: [TODO]
+For further details please read our [AWS DevOps Blog post](https://aws.amazon.com/blogs/devops/using-aws-step-functions-state-machines-to-handle-workflow-driven-aws-codepipeline-actions/)
 
 ## Contributing
 
