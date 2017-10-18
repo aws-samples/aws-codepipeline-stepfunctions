@@ -6,7 +6,7 @@
       "Type": "Task",
       "ResultPath": "$.doesStackExists",
       "OutputPath": "$",
-      "Resource": "arn:aws:lambda:us-east-1:665243897136:function:CheckStackExistsStateMachineTask",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:CheckStackExistsStateMachineTask",
       "Next": "Does Stack Exist?"
     },
     "Does Stack Exist?": {
@@ -24,7 +24,7 @@
       "Type": "Task",
       "ResultPath": "$.stackCreationDetails",
       "OutputPath": "$",
-      "Resource": "arn:aws:lambda:us-east-1:665243897136:function:CreateStackStateMachineTask",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:CreateStackStateMachineTask",
       "Next": "Wait Stack Creation"
     },
     "Wait Stack Creation": {
@@ -36,7 +36,7 @@
       "Type": "Task",
       "ResultPath": "$.stackCreationStatus",
       "OutputPath": "$",
-      "Resource": "arn:aws:lambda:us-east-1:665243897136:function:CheckStackCreationStatusStateMachineTask",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:CheckStackCreationStatusStateMachineTask",
       "Next": "Stack Created?"
     },
     "Stack Created?": {
@@ -54,7 +54,7 @@
       "Type": "Task",
       "ResultPath": "$.changeSetName",
       "OutputPath": "$",
-      "Resource": "arn:aws:lambda:us-east-1:665243897136:function:CreateChangeSetStateMachineTask",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:CreateChangeSetStateMachineTask",
       "Next": "Wait Change Set Creation"
     },
     "Wait Change Set Creation": {
@@ -66,7 +66,7 @@
       "Type": "Task",
       "ResultPath": "$.changeSetCreationStatus",
       "OutputPath": "$",
-      "Resource": "arn:aws:lambda:us-east-1:665243897136:function:CheckChangeSetCreationStatusStateMachineTask",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:CheckChangeSetCreationStatusStateMachineTask",
       "Next": "Change Set Created?"
     },
     "Change Set Created?": {
@@ -84,7 +84,7 @@
       "Type": "Task",
       "ResultPath": "$.changeSetAction",
       "OutputPath": "$",
-      "Resource": "arn:aws:lambda:us-east-1:665243897136:function:InspectChangeSetStateMachineTask",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:InspectChangeSetStateMachineTask",
       "Next": "Safe to Update Infra?"
     },
     "Safe to Update Infra?": {
@@ -102,14 +102,14 @@
       "Type": "Task",
       "ResultPath": "$.changeSetExecutionDetails",
       "OutputPath": "$",
-      "Resource": "arn:aws:lambda:us-east-1:665243897136:function:ExecuteChangeSetStateMachineTask",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ExecuteChangeSetStateMachineTask",
       "Next": "Deployment Succeeded"
     },
     "Delete Change Set": {
       "Type": "Task",
       "ResultPath": "$.changeSetDeletionDetails",
       "OutputPath": "$",
-      "Resource": "arn:aws:lambda:us-east-1:665243897136:function:ExecuteChangeSetStateMachineTask",
+      "Resource": "arn:aws:lambda:us-east-1:123456789012:function:ExecuteChangeSetStateMachineTask",
       "Next": "Deployment Failed"
     },
     "Deployment Succeeded": {
