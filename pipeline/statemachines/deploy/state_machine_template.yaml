@@ -28,9 +28,23 @@ Resources:
             Action: 
               - "sts:AssumeRole"
       Path: "/"
-      ManagedPolicyArns: 
-        -  arn:aws:iam::aws:policy/AWSLambdaExecute
       Policies: 
+        - 
+          PolicyName: "lambdaexecute"
+          PolicyDocument: 
+            Version: "2012-10-17"
+            Statement: 
+              - 
+                Effect: "Allow"
+                Action: 
+                  - "logs:*"
+                Resource: "arn:aws:logs:*:*:*"
+              - 
+                Effect: "Allow"
+                Action: 
+                  - "s3:GetObject"
+                  - "s3:GPutbject"
+                Resource: "arn:aws:s3:::*"
         - 
           PolicyName: "cloudformation"
           PolicyDocument: 

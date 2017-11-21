@@ -1,0 +1,4 @@
+.DS_Store
+pipeline/.DS_Store
+pipeline/codepipeline/.DS_Store
+*.zip
