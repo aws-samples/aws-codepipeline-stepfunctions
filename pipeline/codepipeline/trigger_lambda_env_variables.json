@@ -1,5 +1,5 @@
 {
     "StateMachineTriggerLambda": {
-        "stateMachineArn": "arn:aws:states:us-east-2:665243897136:stateMachine:CodePipelineStepFunctionsStateMachine-HVYLXO6SWU5T"
+        "stateMachineArn": "arn:aws:states:us-east-2:123456789012:stateMachine:CodePipelineStepFunctionsStateMachine-HVYLXO6SWU5T"
     }
 }
