@@ -15,9 +15,11 @@
 
 var AWS = require("aws-sdk");
 var Util = require("pipeline_utils");
+var s3 = new AWS.S3();
+var stepFunctions = new AWS.StepFunctions();
+var stateMachineArn = process.env.stateMachineArn;
 
 function getStateMachineInputData(s3Bucket, stateMachinefile) {
-    var s3 = new AWS.S3();
     var params = {
         Bucket: s3Bucket,
         Key: stateMachinefile
@@ -39,7 +41,6 @@ function getStateMachineExecutionName() {
 }
 
 function triggerStateMachineExecution(stateMachineArn, inputJSON) {
-    var stepFunctions = new AWS.StepFunctions();
     var params = {
         stateMachineArn: stateMachineArn,
         input: JSON.stringify(inputJSON),
@@ -50,7 +51,6 @@ function triggerStateMachineExecution(stateMachineArn, inputJSON) {
 }
 
 function getStateMachineExecutionStatus(stateMachineExecutionArn) {
-    var stepFunctions = new AWS.StepFunctions();
     var params = {
         executionArn: stateMachineExecutionArn
     };
@@ -97,7 +97,6 @@ function failure(jobId, callback, contextId, message) {
 }
 
 function monitorStateMachineExecution(event, context, callback) {
-    var stateMachineArn = process.env.stateMachineArn;
     var continuationToken = JSON.parse(Util.continuationToken(event));
     var stateMachineExecutionArn = continuationToken.stateMachineExecutionArn;
     getStateMachineExecutionStatus(stateMachineExecutionArn)
@@ -121,7 +120,6 @@ function monitorStateMachineExecution(event, context, callback) {
 }
 
 function triggerStateMachine(event, context, callback) {
-    var stateMachineArn = process.env.stateMachineArn;
     var s3Bucket = Util.actionUserParameter(event, "s3Bucket");
     var stateMachineFile = Util.actionUserParameter(event, "stateMachineFile");
     getStateMachineInputData(s3Bucket, stateMachineFile)
