@@ -86,7 +86,7 @@ Resources:
     Properties:
       FunctionName: StateMachineTriggerLambda
       Handler: state_machine_trigger.index
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineTriggerLambdaRole.Arn

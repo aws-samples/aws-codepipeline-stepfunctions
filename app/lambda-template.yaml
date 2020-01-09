@@ -44,7 +44,7 @@ Resources:
               console.log('Received event:', JSON.stringify(event));
               callback(null, JSON.stringify(event));
           };
-      Runtime: "nodejs6.10"
+      Runtime: "nodejs10.x"
       Timeout: "60"
       Role:
         Fn::GetAtt:
