@@ -9,16 +9,16 @@
   "author": "marcilio@amazon.com",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.134.0",
+    "aws-sdk": "^2.643.0",
     "child_process": "^1.0.2",
     "fs": "0.0.1-security",
-    "fstream": "^1.0.11",
-    "mime": "^1.4.1",
-    "mkdirp": "^0.5.1",
-    "moment": "^2.19.1",
+    "fstream": "^1.0.12",
+    "mime": "^1.6.0",
+    "mkdirp": "^0.5.3",
+    "moment": "^2.24.0",
     "path": "^0.12.7",
-    "tar": "^4.0.1",
-    "yauzl": "^2.8.0",
+    "tar": "^4.4.13",
+    "yauzl": "^2.10.0",
     "zip-folder": "^1.0.0",
     "zlib": "^1.0.5"
   }
