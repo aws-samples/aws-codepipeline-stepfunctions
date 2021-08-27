@@ -85,7 +85,7 @@ Resources:
     Properties:
       FunctionName: CreateStackStateMachineTask
       Handler: create_stack.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineLambdaRole.Arn
@@ -94,7 +94,7 @@ Resources:
     Properties:
       FunctionName: CheckStackExistsStateMachineTask
       Handler: check_stack_exists.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineLambdaRole.Arn
@@ -103,7 +103,7 @@ Resources:
     Properties:
       FunctionName: CreateChangeSetStateMachineTask
       Handler: create_change_set.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineLambdaRole.Arn
@@ -112,7 +112,7 @@ Resources:
     Properties:
       FunctionName: CheckStackCreationStatusStateMachineTask
       Handler: check_stack_creation_status.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineLambdaRole.Arn
@@ -121,7 +121,7 @@ Resources:
     Properties:
       FunctionName: CheckChangeSetCreationStatusStateMachineTask
       Handler: check_change_set_creation_status.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineLambdaRole.Arn
@@ -130,7 +130,7 @@ Resources:
     Properties:
       FunctionName: ExecuteChangeSetStateMachineTask
       Handler: execute_change_set.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineLambdaRole.Arn
@@ -139,7 +139,7 @@ Resources:
     Properties:
       FunctionName: InspectChangeSetStateMachineTask
       Handler: inspect_change_set.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineLambdaRole.Arn
@@ -148,7 +148,7 @@ Resources:
     Properties:
       FunctionName: DeleteChangeSetStateMachineTask
       Handler: delete_change_set.handler
-      Runtime: nodejs6.10
+      Runtime: nodejs10.x
       MemorySize: 128
       Timeout: 30
       Role: !GetAtt StateMachineLambdaRole.Arn
