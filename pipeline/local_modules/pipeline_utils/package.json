@@ -9,7 +9,7 @@
   "author": "marcilio@amazon.com",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.643.0",
+    "aws-sdk": "^2.1354.0",
     "child_process": "^1.0.2",
     "fs": "0.0.1-security",
     "fstream": "^1.0.12",
