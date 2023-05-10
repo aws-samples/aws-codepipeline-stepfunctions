@@ -10,7 +10,6 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.643.0",
-    "child_process": "^1.0.2",
     "fs": "0.0.1-security",
     "fstream": "^1.0.12",
     "mime": "^1.6.0",
