@@ -9,7 +9,7 @@
   "author": "marcilio@amazon.com",
   "license": "ISC",
   "dependencies": {
-    "aws-sdk": "^2.134.0",
+    "aws-sdk": "^2.814.0",
     "cloudformation": "file:../../local_modules/cloudformation.tar.gz",
     "fs": "0.0.1-security",
     "pipeline_utils": "file:../../local_modules/pipeline_utils.tar.gz"
